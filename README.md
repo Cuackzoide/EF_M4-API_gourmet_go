@@ -1,84 +1,150 @@
-# 📥 EF- M4 Proyecto Integrador Sprint 2
+# 🍽️ Gourmet GO! - Buscador de Recetas
 
-## Sprint 2: Desarrollo de Funcionalidad y Conexión a API
+## 📋 Descripción
 
-### Briefing del Cliente: "Gourmet Go" - Fase 2
+Proyecto integrador del **Módulo 4: JavaScript Avanzado** - Sprint 2. Una aplicación web funcional que permite buscar recetas por ingrediente utilizando la API de TheMealDB. Transforma una maqueta estática en una experiencia interactiva con llamadas asíncronas y renderizado dinámico.
 
-¡El equipo está muy satisfecho con el prototipo visual del Sprint 1! El diseño ha sido aprobado y ahora es el momento de darle vida a la aplicación.
+## ✨ Características
 
-Para este segundo y último sprint, el objetivo es transformar la maqueta estática en una aplicación web completamente funcional. Esto implica conectar la interfaz con una API de recetas real, gestionar las búsquedas del usuario de forma asíncrona y mostrar los resultados dinámicamente en la página.
+- 🔍 **Búsqueda por ingrediente**: Encuentra recetas basadas en un ingrediente específico
+- ⚡ **Renderizado dinámico**: Resultados actualizados sin recargar la página
+- 🚫 **Manejo de errores**: Mensajes informativos cuando no hay resultados
+- 📱 **Responsive**: Diseño adaptativo con Bootstrap 5
 
-**Información Clave sobre la API de TheMealDB:**
-Antes de comenzar, es fundamental entender cómo obtendremos los datos. Para saber qué ingredientes se pueden buscar, la API nos proporciona un endpoint que lista todas las opciones disponibles:
+## 🛠️ Tecnologías Utilizadas
 
-**Endpoint para listar todos los ingredientes:**
-https://www.themealdb.com/api/json/v1/1/list.php?i=list
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Framework CSS**: Bootstrap 5.3.8
+- **API**: [TheMealDB](https://www.themealdb.com/api.php)
+- **Herramientas**: Fetch API, Async/Await, Template Literals, Destructuring
 
-Al consultar esta dirección, obtendrán un objeto JSON que contiene un array. Cada elemento de ese array es un objeto que representa un ingrediente. La propiedad clave que nos interesa de cada objeto es `strIngredient`. Este es el dato que luego utilizaremos en el endpoint de filtrado para buscar las recetas.
+## 🚀 Instalación y Uso
 
-Por ejemplo, un segmento del JSON que devuelve la API se ve así:
+### Prerrequisitos
 
-```js
+- Navegador web moderno
+- Conexión a internet (para las llamadas a la API)
+
+### Instalación
+
+1. Clona este repositorio:
+
+   ```bash
+   git clone https://github.com/tu-usuario/EF_M4-API_gourmet_go.git
+   ```
+
+2. Navega al directorio del proyecto:
+
+   ```bash
+   cd EF_M4-API_gourmet_go
+   ```
+
+3. Abre `index.html` en tu navegador preferido.
+
+### Uso
+
+1. Ingresa un ingrediente en la barra de búsqueda (ej: "chicken", "beef", "tomato")
+2. Presiona el botón "Buscar" o la tecla Enter
+3. Explora las recetas que aparecen en la galería
+
+## 📚 API de TheMealDB
+
+### Endpoints utilizados:
+
+- **Lista de ingredientes**: `https://www.themealdb.com/api/json/v1/1/list.php?i=list`
+- **Búsqueda por ingrediente**: `https://www.themealdb.com/api/json/v1/1/filter.php?i={ingrediente}`
+
+### Estructura de respuesta:
+
+```json
 {
-"idIngredient": "47",
-"strIngredient": "Cardamom",
-"strDescription": null,
-"strType": null
+  "meals": [
+    {
+      "idMeal": "52772",
+      "strMeal": "Teriyaki Chicken Casserole",
+      "strDrinkAlternate": null,
+      "strCategory": "Chicken",
+      "strArea": "Japanese",
+      "strInstructions": "...",
+      "strMealThumb": "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
+      "strTags": "Meat,Casserole",
+      "strYoutube": "https://www.youtube.com/watch?v=4aZr5hZXP_s"
+      // ... más propiedades
+    }
+  ]
 }
 ```
 
-Conocer este listado les permitirá entender qué datos son válidos para las búsquedas que implementarán a continuación. Al finalizar este sprint, tendremos un producto mínimo viable (MVP) listo para ser presentado.
+## 📖 Historias de Usuario
 
-### Historias de Usuario a Implementar
+### HU-04: Búsqueda Funcional de Recetas
 
-#### HU-04: Búsqueda Funcional de Recetas
-
-- Como usuario, quiero poder escribir un ingrediente en la barra de búsqueda y presionar "Buscar", para obtener una lista de recetas que contengan ese ingrediente.
+**Como usuario**, quiero poder escribir un ingrediente en la barra de búsqueda y presionar "Buscar", para obtener una lista de recetas que contengan ese ingrediente.
 
 **Criterios de Aceptación:**
 
-✅ Al enviar el formulario de búsqueda (haciendo clic en el botón o presionando Enter), se debe prevenir el comportamiento por defecto de recarga de la página.
+- ✅ Prevención del comportamiento por defecto del formulario
+- ✅ Captura del texto del input
+- ✅ Llamada asíncrona a la API usando `fetch` con `async/await`
+- ✅ Endpoint: `https://www.themealdb.com/api/json/v1/1/filter.php?i=[ingrediente]`
 
-✅ Se debe capturar el texto ingresado por el usuario en el campo de búsqueda.
+### HU-05: Renderizado Dinámico de Resultados
 
-✅ Se debe realizar una llamada asíncrona a la API de TheMealDB usando el ingrediente capturado. El endpoint a utilizar es: https://www.themealdb.com/api/json/v1/1/filter.php?i=[ingrediente_del_usuario].
-
-✅ La llamada a la API debe realizarse utilizando la sintaxis moderna `fetch` con `async/await`.
-
-#### HU-05: Renderizado Dinámico de Resultados
-
-- Como usuario, quiero que los resultados de mi búsqueda aparezcan en la galería sin que la página se recargue, para tener una experiencia de usuario fluida y rápida.
+**Como usuario**, quiero que los resultados de mi búsqueda aparezcan en la galería sin que la página se recargue.
 
 **Criterios de Aceptación:**
 
-✅ Las tarjetas de recetas "hard-codeadas" del `index.html` deben ser eliminadas. El contenedor de resultados debe estar vacío por defecto.
+- ✅ Eliminación de tarjetas hard-codeadas del HTML
+- ✅ Generación dinámica de tarjetas usando template literals
+- ✅ Uso de desestructuración para extraer datos
+- ✅ Limpieza del contenedor antes de nuevas búsquedas
 
-✅ Por cada receta devuelta por la API, se debe generar dinámicamente una tarjeta HTML y añadirla al DOM.
+### HU-06: Manejo de Búsquedas sin Resultados
 
-✅ La estructura HTML de cada tarjeta debe ser generada utilizando _template literals_ de ES6+ y debe replicar exactamente el diseño de las tarjetas del Sprint 1 (usando las mismas clases de Bootstrap).
-
-✅ Los datos de la receta (nombre, imagen) deben ser extraídos del objeto de respuesta de la API, preferiblemente usando _desestructuración_.
-
-✅ Al realizar una nueva búsqueda, los resultados anteriores deben ser eliminados del contenedor antes de mostrar los nuevos.
-
-#### HU-06: Manejo de Búsquedas sin Resultados
-
-- Como usuario, quiero recibir un mensaje claro si mi búsqueda no encuentra ninguna receta, para saber que la búsqueda se completó y que debo intentar con otro ingrediente.
+**Como usuario**, quiero recibir un mensaje claro si mi búsqueda no encuentra ninguna receta.
 
 **Criterios de Aceptación:**
 
-✅ Si la respuesta de la API indica que no se encontraron recetas para un ingrediente (`meals` es `null`), el contenedor de resultados debe mostrar un único mensaje informativo, como por ejemplo: "Lo sentimos, no se encontraron recetas. Intenta con otro ingrediente."
+- ✅ Mensaje informativo cuando `meals` es `null`
 
-### Requisitos Técnicos y Entregables
+## ⚙️ Requisitos Técnicos
 
-- **Código Fuente:** Todo el código JavaScript debe ser escrito en el archivo `app.js.`
+- **Archivo principal**: `assets/js/main.js`
+- **Sintaxis**: ES6+ obligatoria (`let/const`, arrow functions, template literals, destructuring)
+- **Asincronía**: `fetch` + `async/await`
+- **DOM**: Manipulación nativa del DOM
+- **Buenas prácticas**: Programación Orientada a Objetos recomendada (clase `Receta`)
 
-- **Sintaxis Moderna (ES6+):** Es mandatorio el uso de `let` y `const` para la declaración de variables, `arrow functions`, `template literals` y `destructuring`.
+## 📁 Estructura del Proyecto
 
-- **Asincronía:** La gestión de las llamadas a la API debe realizarse con `fetch` y la sintaxis `async/await` para un manejo de código limpio y legible.
+EF_M4-API_gourmet_go/
+├── index.html # Página principal
+├── README.md # Este archivo
+├── assets/
+│ ├── css/
+│ │ └── styles.css # Estilos personalizados
+│ ├── img/ # Imágenes del proyecto
+│ └── js/
+│ └── main.js # Lógica JavaScript
 
-- **Manipulación del DOM:** Toda la interacción con el HTML (lectura de inputs, limpieza y renderizado de resultados) debe hacerse a través de los métodos del DOM.
+## 🤝 Contribuciones
 
-- **Buenas Prácticas:** (Opcional pero recomendado) Considerar el uso de Programación Orientada a Objetos (POO) creando una clase `Receta` para modelar y estandarizar los datos recibidos de la API antes de renderizarlos.
+¡Las contribuciones son bienvenidas! Si encuentras un bug o tienes una mejora:
 
-- **Entregable:** Un [repositorio público](https://github.com/Cuackzoide/EF_M4-Sprint-2_api) de GitHub con el proyecto finalizado y completamente funcional.
+1. Haz un fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto es parte de un curso educativo y está disponible bajo la Licencia MIT.
+
+## 👨‍💻 Autor
+
+Proyecto desarrollado como parte del curso de JavaScript Avanzado.
+
+---
+
+⭐ Si te gusta este proyecto, ¡dale una estrella en GitHub!
