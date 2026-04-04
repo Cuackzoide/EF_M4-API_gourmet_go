@@ -1,84 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gourmet GO!</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="./assets/css/styles.css" />
-  </head>
-  <body>
-    <header class="container-fluid hero">
-      <div class="px-4 py-5 text-center">
-        <h1 class="display-5 fw-bold text-body-emphasis">
-          Gourmet GO!: <br />Recipes finder
-        </h1>
-        <div class="row">
-          <div class="col">
-            <form class="d-flex" role="search">
-              <input
-                id="searchInput"
-                class="form-control py-2 m-2"
-                type="search"
-                placeholder="Search by ingredient"
-                aria-label="Search"
-              />
-              <button id="searchButton" class="btn btn-secondary" type="submit">
-                Search
-              </button>
-            </form>
-          </div>
-        </div>
-        <div class="col-lg-6 mx-auto">
-          <p class="lead mb-4">
-            Explore a wide variety of delicious and healthy recipes with Gourmet
-            GO!. Find inspiration for your everyday meals and discover new
-            recipes for every occasion.
-          </p>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gourmet GO!</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+
+<body>
+  <header class="container-fluid hero">
+    <div class="px-4 py-5 text-center">
+      <h1 class="display-5 fw-bold text-body-emphasis">
+        Gourmet GO!: <br />Recipes finder
+      </h1>
+      <div class="row">
+        <div class="col">
+          <form class="d-flex" role="search">
+            <input id="searchInput" class="form-control py-2 m-2" type="search" placeholder="Search by ingredient"
+              aria-label="Search" />
+            <button id="searchButton" class="btn btn-secondary" type="submit">
+              Search
+            </button>
+          </form>
         </div>
       </div>
-    </header>
-    <!-- TABS BAR -->
-    <nav class="navbar bg-body-tertiary mb-4">
-      <div class="container justify-content-center">
-        <a class="navbar-brand" href="#">
-          <img
-            src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-NNaKBbsk6wEPIDwYDGs485kgjpk8VQ.png&w=1000&q=75"
-            alt="Gourmet Go Logo"
-            width="30"
-            height="30"
-          />
-          Go! searches
-        </a>
-        <ul class="nav nav-tabs">
-          <!-- Tabs will be dynamically inserted here -->
-        </ul>
-      </div>
-    </nav>
-    <main class="container">
-      <section class="row row-cols-2 row-cols-lg-3 g-3" id="recipe-container">
-        <!-- Recipe Cards will be dynamically inserted here -->
-      </section>
-    </main>
-    <footer>
-      <div
-        class="container-fluid bg-secondary text-white text-center py-3 mt-4"
-      >
-        <p class="mb-0">
-          2024 Cuackzoide&copy; & Gourmet GO! - All rights reserved.
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">
+          Explore a wide variety of delicious and healthy recipes with Gourmet
+          GO!. Find inspiration for your everyday meals and discover new
+          recipes for every occasion.
         </p>
       </div>
-    </footer>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"
-    ></script>
-    <script src="./assets/js/main.js"></script>
-  </body>
+    </div>
+  </header>
+  <!-- TABS BAR -->
+  <nav class="navbar bg-body-tertiary mb-4">
+    <div class="container justify-content-center">
+      <a class="navbar-brand" href="#">
+        <img
+          src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-NNaKBbsk6wEPIDwYDGs485kgjpk8VQ.png&w=1000&q=75"
+          alt="Gourmet Go Logo" width="30" height="30" />
+        Go! searches
+      </a>
+      <ul class="nav nav-tabs">
+        <!-- Tabs will be dynamically inserted here -->
+      </ul>
+    </div>
+  </nav>
+  <main class="container">
+    <section class="row row-cols-2 row-cols-lg-3 g-3" id="recipe-container">
+      <!-- Recipe Cards will be dynamically inserted here -->
+    </section>
+    <!-- Modal -->
+    <div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" id="modal-content">
+          <!-- Modal content will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div class="container-fluid bg-secondary text-white text-center py-3 mt-4">
+      <p class="mb-0">
+        2024 Cuackzoide&copy; & Gourmet GO! - All rights reserved.
+      </p>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+  <script src="./assets/js/main.js"></script>
+</body>
+
 </html>
