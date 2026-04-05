@@ -1,11 +1,19 @@
 .hero {
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.6),
-      rgba(255, 255, 255, 0.8)
-    ),
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
     url(../img/tarjetas_de_recetas_vintage.jpg);
 }
 .img-fit {
   aspect-ratio: 3 / 2;
   object-fit: cover;
+}
+
+/* Unificar altura de títulos para una cuadrícula perfecta */
+.card-title {
+  height: 3.5rem; /* Espacio exacto para 2 líneas de texto */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Corta el texto con elipses si supera las 2 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1rem;
 }

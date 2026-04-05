@@ -33,8 +33,8 @@ function splitInstructions(instructions) {
   if (!instructions) return "";
   return instructions
     .split(/\r?\n/)
-    .filter(step => step.trim() !== "")
-    .map(step => `<li>${step.trim()}</li>`)
+    .filter((step) => step.trim() !== "")
+    .map((step) => `<li>${step.trim()}</li>`)
     .join("");
 }
 
@@ -47,6 +47,42 @@ let searchHistory = [
   "tomato",
   "potatoes",
 ];
+
+// Función para mostrar esqueletos de carga (Skeleton)
+function renderSkeleton(elementHTML) {
+  elementHTML.innerHTML = "";
+  // Generamos 6 tarjetas de precarga
+  for (let i = 0; i < 6; i++) {
+    elementHTML.innerHTML += /* html */ `
+      <div class="col">
+        <div class="card h-100" aria-hidden="true">
+          <div class="placeholder-glow">
+            <div class="placeholder col-12 rounded" style="height: 14.5rem;"></div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-10 rounded-pill"></span>
+            </h5>
+            <!-- <p class="card-text placeholder-glow">
+              <span class="placeholder col-6 rounded-pill"></span>
+            </p> -->
+            <a tabindex="-1" class="btn btn-warning-subtle col-12 disabled placeholder rounded mt-auto"></a>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+// Función para mostrar un spinner (ideal para modales o cargas rápidas)
+function renderSpinner(elementHTML) {
+  elementHTML.innerHTML = /* html */ `
+    <div class="d-flex justify-content-center align-items-center w-100 my-5 py-5">
+      <div class="spinner-border text-warning-subtle" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>`;
+}
+
 // Función para actualizar el historial con nuevas busquedas
 function updateHistory(string) {
   if (searchHistory.includes(string)) {
@@ -58,26 +94,31 @@ function updateHistory(string) {
     searchHistory.pop();
   }
 }
+
 // Funcion para renderizar las recetas
 function showRecipes(recipesArray, elementHTML) {
   elementHTML.innerHTML = "";
   if (!recipesArray || recipesArray.length === 0) {
-    elementHTML.innerHTML = `<p class="text-center w-100 lead">No recipes found.</p>`;
+    elementHTML.innerHTML = /* html */ `<p class="text-center w-100 lead">No recipes found.</p>`;
     return;
   }
   recipesArray.forEach((product) => {
-    elementHTML.innerHTML += `<article class="col">
-        <div class="card h-100">
+    elementHTML.innerHTML += /* html */ `
+    <article class="col">
+      <div class="card h-100">
         <img
-    src="${product.strMealThumb}"
-    class="card-img-top img-fit"
+          src="${product.strMealThumb}"
+          class="card-img-top img-fit rounded"
           alt="${product.strMeal}"
           loading="lazy"
-          />
-          <div class="card-body d-flex flex-column">
-          <h5 class="card-title">${product.strMeal}</h5>
-          <p class="card-text">${product.idMeal}</p>
-          <button type="button" class="btn btn-primary recipe-btn" data-bs-toggle="modal" data-bs-target="#recipeModal" data-id="${product.idMeal}">
+        />
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title pb-2">${product.strMeal}</h5>
+          <button type="button" 
+          class="btn btn-warning text-secondary fw-semibold mt-auto recipe-btn" 
+          data-bs-toggle="modal" 
+          data-bs-target="#recipeModal" 
+          data-id="${product.idMeal}">
             GO to Recipe
           </button>
           </div>
@@ -85,15 +126,16 @@ function showRecipes(recipesArray, elementHTML) {
           </article>`;
   });
 }
+
 // Funcion para renderizar las pestañas de categorías
 function showTabs(categoriesArray, TabsBar) {
   TabsBar.innerHTML = "";
   categoriesArray.forEach((category) => {
-    TabsBar.innerHTML += `
+    TabsBar.innerHTML += /* html */ `
     <li class="nav-item"
     role="presentation">
-    <a class="nav-link" 
-    href="#" 
+    <a class="nav-link text-black" 
+    href="#"
     data-target="${category}">
     ${category}</a>
     </li>`;
@@ -104,21 +146,22 @@ function showTabs(categoriesArray, TabsBar) {
 function fullRecipe(recipe, elementHTML) {
   elementHTML.innerHTML = "";
   if (!recipe || recipe.length === 0) {
-    elementHTML.innerHTML = `<p class="text-center w-100 lead">No recipes found.</p>`;
+    elementHTML.innerHTML = /* html */ `<p class="text-center w-100 lead">No recipes found.</p>`;
     return;
   }
+  // accion intermedia para obtener los ingredientes
   let ingredientsHTML = "";
   for (let i = 1; i <= 20; i++) {
     const ingredient = recipe["strIngredient" + i];
     const measure = recipe["strMeasure" + i];
     if (ingredient && ingredient.trim() !== "") {
-      ingredientsHTML += `<li>${ingredient} - ${measure}</li>`;
+      ingredientsHTML += /* html */ `<li>${ingredient} - ${measure}</li>`;
     }
   }
-
-  elementHTML.innerHTML += `
-      <div class="modal-header">
-        <h1 class="modal-title text-center fs-5" id="recipeModalLabel">
+  // renderizado de la receta completa
+  elementHTML.innerHTML += /* html */ `
+      <div class="modal-header d-flex">
+        <h1 class="modal-title fs-5 text-center text-warning" id="recipeModalLabel">
         ${recipe.strMeal}
         </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -153,6 +196,7 @@ async function searchIngredient() {
     return [];
   }
 }
+
 // Función para buscar recetas por ingrediente desde la API
 async function searchMeals(ingredient) {
   const url = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`;
@@ -166,6 +210,7 @@ async function searchMeals(ingredient) {
   }
 }
 
+// Funcion para buscar una receta por id desde la API
 async function searchRecipeById(id) {
   const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
   try {
@@ -192,9 +237,11 @@ const modal = new bootstrap.Modal(modalElement);
 searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const searchTerm = formatter(searchInput.value);
+  // Mostramos esqueletos mientras buscamos ingredientes
+  renderSkeleton(recipeContainer);
   const ingredientList = await searchIngredient();
   const match = ingredientList.some(
-    (ingredient) => formatter(ingredient) === searchTerm
+    (ingredient) => formatter(ingredient) === searchTerm,
   );
   if (match) {
     const recipes = await searchMeals(searchTerm);
@@ -205,7 +252,7 @@ searchForm.addEventListener("submit", async (e) => {
     links.forEach((el) => el.classList.remove("active"));
     links[0].classList.add("active"); // siempre queda en primera pestaña
   } else {
-    recipeContainer.innerHTML = `<p class="text-center w-100 lead">There are no recipes for "${searchTerm}" or It's not a valid search.</p>`;
+    recipeContainer.innerHTML = /* html */ `<p class="text-center w-100 lead">There are no recipes for "${searchTerm}" or It's not a valid search.</p>`;
     const links = document.querySelectorAll(".nav-link");
     links.forEach((el) => el.classList.remove("active"));
   }
@@ -218,6 +265,8 @@ navTabs.addEventListener("click", async (e) => {
   e.preventDefault();
   const link = e.target.closest(".nav-link"); //evita errores al presionar
   if (!link) return;
+  // Mostramos esqueletos mientras cargamos
+  renderSkeleton(recipeContainer);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   link.classList.add("active");
@@ -236,21 +285,24 @@ navBrand.addEventListener("click", async (e) => {
   if (links[0]) links[0].classList.add("active");
 });
 
-// Manejo del clic en el botón de la receta 
+// Manejo del clic en el botón de la receta
 // Seleccionamos recipeContainer para usar event delegation
 recipeContainer.addEventListener("click", async (e) => {
   e.preventDefault();
   const recipeBtn = e.target.closest(".recipe-btn");
   if (!recipeBtn) return;
+  // Limpiamos y mostramos spinner en el contenido del modal
+  renderSpinner(modalContent);
+  modal.show();
   const recipeId = recipeBtn.dataset.id;
   const recipe = await searchRecipeById(recipeId);
   fullRecipe(recipe.meals[0], modalContent);
-  modal.show();
 });
 
 // Carga inicial de la página
 document.addEventListener("DOMContentLoaded", async (e) => {
   showTabs(searchHistory, navTabs);
+  renderSkeleton(recipeContainer);
   showRecipes(await searchMeals(searchHistory[0]), recipeContainer);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
