@@ -112,21 +112,74 @@ function CategoryEmoji(category) {
       return "🥦";
     case "Breakfast":
       return "🍳";
-    case "Goat":
       return "🐐";
     default:
       return "🍽️";
   }
 }
-// Array de ingredientes buscados, con valores por defecto para inicio rapido
-let searchHistory = [
-  "onion",
-  "chicken",
-  "garlic",
-  "beef",
-  "tomato",
-  "potatoes",
-];
+
+// Funcion para buscar icono de ingrediente (Híbrido: Emoji + Imagen API)
+function IngredientIcon(ingredient) {
+  const commonIngredients = {
+    Onion: "🧅",
+    Garlic: "🧄",
+    Chicken: "🍗",
+    Beef: "🥩",
+    Tomato: "🍅",
+    Potato: "🥔",
+    Egg: "🥚",
+    Milk: "🥛",
+    Butter: "🧈",
+    Salt: "🧂",
+    Pepper: "🌶️",
+    Sugar: "🍯",
+    Flour: "🌾",
+    Rice: "🍚",
+    Bread: "🍞",
+    Cheese: "🧀",
+    Carrot: "🥕",
+    Apple: "🍎",
+    Lemon: "🍋",
+    Lime: "🍈",
+    Banana: "🍌",
+    Strawberry: "🍓",
+    Spinach: "🍃",
+    Broccoli: "🥦",
+    Mushroom: "🍄",
+    Ginger: "🫚",
+    Salmon: "🐟",
+    Tuna: "🍣",
+    Oil: "💧",
+    Water: "💧",
+  };
+
+  // Normalizamos el nombre para búsqueda en el diccionario (Capitalizado)
+  const capitalized = ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase();
+  const emoji = commonIngredients[capitalized];
+
+  if (emoji) {
+    return `<span class="tab-icon">${emoji}</span>`;
+  }
+
+  // Fallback: Imagen de la API (Small) para mayor cobertura
+  return `<img src="https://www.themealdb.com/images/ingredients/${capitalized}-Small.png" 
+          alt="${ingredient}" class="tab-icon-img" loading="lazy">`;
+}
+// Estructura oficial de historial por categorías
+const defaultHistory = {
+  ingredients: ["onion", "chicken", "garlic", "beef", "tomato", "potatoes"],
+  areas: ["American", "British", "Canadian", "Chinese", "French", "Greek"],
+  categories: ["Beef", "Chicken", "Dessert", "Lamb", "Pasta", "Pork"],
+};
+
+// Cargar historial desde LocalStorage o usar valores por defecto
+let searchHistory = JSON.parse(localStorage.getItem("gourmetGoHistory")) || defaultHistory;
+let activeMode = "ingredients"; // Modo de búsqueda activo por defecto
+
+// Función para guardar historial en LocalStorage
+function saveHistory() {
+  localStorage.setItem("gourmetGoHistory", JSON.stringify(searchHistory));
+}
 
 // Función para mostrar esqueletos de carga (Skeleton)
 function renderSkeleton(elementHTML) {
@@ -163,16 +216,18 @@ function renderSpinner(elementHTML) {
     </div>`;
 }
 
-// Función para actualizar el historial con nuevas busquedas
+// Función para actualizar el historial con nuevas busquedas según el modo activo
 function updateHistory(string) {
-  if (searchHistory.includes(string)) {
-    let position = searchHistory.indexOf(string);
-    searchHistory.splice(position, 1);
+  const currentArray = searchHistory[activeMode];
+  if (currentArray.includes(string)) {
+    let position = currentArray.indexOf(string);
+    currentArray.splice(position, 1);
   }
-  searchHistory.unshift(string);
-  if (searchHistory.length > 6) {
-    searchHistory.pop();
+  currentArray.unshift(string);
+  if (currentArray.length > 6) {
+    currentArray.pop();
   }
+  saveHistory();
 }
 
 // Funcion para renderizar las recetas
@@ -207,17 +262,26 @@ function showRecipes(recipesArray, elementHTML) {
   });
 }
 
-// Funcion para renderizar las pestañas de categorías
+// Funcion para renderizar las pestañas de categorías (historial)
 function showTabs(categoriesArray, TabsBar) {
   TabsBar.innerHTML = "";
-  categoriesArray.forEach((category) => {
+  categoriesArray.forEach((item) => {
+    let displayContent = item;
+    
+    // Condicional para agregar banderas o emojis según el modo
+    if (activeMode === "areas") {
+      displayContent = `<img src="${CountryFlag(item)}" alt="${item}" width="18" class="me-1"> ${item}`;
+    } else if (activeMode === "categories") {
+      displayContent = `${CategoryEmoji(item)} ${item}`;
+    } else if (activeMode === "ingredients") {
+      displayContent = `${IngredientIcon(item)} ${item}`;
+    }
+
     TabsBar.innerHTML += /* html */ `
-    <li class="nav-item"
-    role="presentation">
-    <a class="nav-link text-black" 
-    href="#"
-    data-target="${category}">
-    ${category}</a>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link text-black" href="#" data-target="${item}">
+        ${displayContent}
+      </a>
     </li>`;
   });
 }
@@ -381,49 +445,108 @@ const modal = new bootstrap.Modal(modalElement);
 searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const searchTerm = formatter(searchInput.value);
-  // Mostramos esqueletos mientras buscamos ingredientes
+  if (!searchTerm) return;
+
   renderSkeleton(recipeContainer);
-  const ingredientList = await searchIngredient();
-  const match = ingredientList.some(
-    (ingredient) => formatter(ingredient) === searchTerm,
-  );
-  if (match) {
-    const recipes = await searchMeals(searchTerm);
+  
+  let recipes = [];
+  let isValid = false;
+
+  // Lógica de búsqueda según el modo activo
+  let matchedItem = "";
+
+  if (activeMode === "ingredients") {
+    const list = await searchIngredient();
+    matchedItem = list.find(item => formatter(item) === searchTerm);
+    if (matchedItem) {
+      isValid = true;
+      recipes = await searchMeals(searchTerm);
+    }
+  } else if (activeMode === "areas") {
+    const list = await searchAreas();
+    matchedItem = list.find(item => formatter(item) === searchTerm);
+    if (matchedItem) {
+      isValid = true;
+      recipes = await searchMealsByArea(searchTerm);
+    }
+  } else if (activeMode === "categories") {
+    const list = await searchCategories();
+    matchedItem = list.find(item => formatter(item) === searchTerm);
+    if (matchedItem) {
+      isValid = true;
+      recipes = await searchMealsByCategory(searchTerm);
+    }
+  }
+
+  if (isValid && recipes.length > 0) {
     showRecipes(recipes, recipeContainer);
-    updateHistory(searchTerm);
-    showTabs(searchHistory, navTabs);
+    // Guardamos el nombre original (con mayúsculas) en el historial
+    updateHistory(matchedItem);
+    showTabs(searchHistory[activeMode], navTabs);
     const links = document.querySelectorAll(".nav-link");
     links.forEach((el) => el.classList.remove("active"));
-    links[0].classList.add("active"); // siempre queda en primera pestaña
+    if (links[0]) links[0].classList.add("active");
   } else {
-    recipeContainer.innerHTML = /* html */ `<p class="text-center w-100 lead">There are no recipes for "${searchTerm}" or It's not a valid search.</p>`;
-    const links = document.querySelectorAll(".nav-link");
-    links.forEach((el) => el.classList.remove("active"));
+    recipeContainer.innerHTML = /* html */ `<p class="text-center w-100 lead">No results for "${searchTerm}" in ${activeMode}.</p>`;
   }
   searchInput.value = "";
   searchInput.focus();
 });
 
-// Manejo del clic en las pestañas de navegación
+// Manejo del cambio de modo (Ingredient, Area, Category)
+document.querySelectorAll('input[name="searchMode"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    activeMode = e.target.value;
+    
+    // Actualizar placeholder del input
+    const placeholders = {
+      ingredients: "Search by ingredient (e.g. Chicken)",
+      areas: "Search by origin (e.g. Mexican)",
+      categories: "Search by category (e.g. Seafood)"
+    };
+    searchInput.placeholder = placeholders[activeMode];
+    
+    // Actualizar historial visualmente
+    showTabs(searchHistory[activeMode], navTabs);
+    const links = document.querySelectorAll(".nav-link");
+    links.forEach((el) => el.classList.remove("active"));
+    if (links[0]) links[0].classList.add("active");
+  });
+});
+
+// Manejo del clic en las pestañas de navegación (historial)
 navTabs.addEventListener("click", async (e) => {
   e.preventDefault();
-  const link = e.target.closest(".nav-link"); //evita errores al presionar
+  const link = e.target.closest(".nav-link");
   if (!link) return;
-  // Mostramos esqueletos mientras cargamos
+
   renderSkeleton(recipeContainer);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   link.classList.add("active");
-  const ingredient = e.target.textContent.trim();
-  const recipes = await searchMeals(ingredient);
+
+  const target = link.dataset.target;
+  let recipes = [];
+
+  if (activeMode === "ingredients") recipes = await searchMeals(target);
+  else if (activeMode === "areas") recipes = await searchMealsByArea(target);
+  else if (activeMode === "categories") recipes = await searchMealsByCategory(target);
+
   showRecipes(recipes, recipeContainer);
 });
 
 // Manejo del clic en la "Brand" de la barra de navegación
 navBrand.addEventListener("click", async (e) => {
   e.preventDefault();
-  showTabs(searchHistory, navTabs);
-  showRecipes(await searchMeals(searchHistory[0]), recipeContainer);
+  showTabs(searchHistory[activeMode], navTabs);
+  
+  let recipes = [];
+  const initial = searchHistory[activeMode][0];
+  if (activeMode === "ingredients") recipes = await searchMeals(initial);
+  else if (activeMode === "areas") recipes = await searchMealsByArea(initial);
+  else if (activeMode === "categories") recipes = await searchMealsByCategory(initial);
+
+  showRecipes(recipes, recipeContainer);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   if (links[0]) links[0].classList.add("active");
@@ -448,26 +571,59 @@ modalContent.addEventListener("click", async (e) => {
   e.preventDefault();
   const areaBtn = e.target.closest("#area-btn");
   const categoryBtn = e.target.closest("#category-btn");
-  if (!areaBtn && !categoryBtn) return;  
+  if (!areaBtn && !categoryBtn) return;
 
   modal.hide();
   renderSkeleton(recipeContainer);
+
   let recipes = [];
+  let searchedItem = "";
+
   if (areaBtn) {
-    const area = areaBtn.dataset.target;
-    recipes = await searchMealsByArea(area);
+    searchedItem = areaBtn.dataset.target;
+    activeMode = "areas";
+    document.getElementById("modeAreas").checked = true;
+    recipes = await searchMealsByArea(searchedItem);
   } else if (categoryBtn) {
-    const category = categoryBtn.dataset.target;
-    recipes = await searchMealsByCategory(category);
+    searchedItem = categoryBtn.dataset.target;
+    activeMode = "categories";
+    document.getElementById("modeCategories").checked = true;
+    recipes = await searchMealsByCategory(searchedItem);
   }
+
+  // Mismo orden que el submit: renderizar → historial → tabs → tab activa
   showRecipes(recipes, recipeContainer);
+  updateHistory(searchedItem);
+
+  // Sincronizar placeholder
+  const placeholders = {
+    ingredients: "Search by ingredient (e.g. Chicken)",
+    areas: "Search by origin (e.g. Mexican)",
+    categories: "Search by category (e.g. Seafood)"
+  };
+  searchInput.placeholder = placeholders[activeMode];
+
+  // Re-renderizar tabs con el nuevo historial (searchedItem queda en [0])
+  showTabs(searchHistory[activeMode], navTabs);
+
+  // Activar la primera tab = la nueva entrada recién buscada
+  const links = document.querySelectorAll(".nav-link");
+  links.forEach((el) => el.classList.remove("active"));
+  if (links[0]) links[0].classList.add("active");
 });
 
 // Carga inicial de la página
 document.addEventListener("DOMContentLoaded", async (e) => {
-  showTabs(searchHistory, navTabs);
+  showTabs(searchHistory[activeMode], navTabs);
   renderSkeleton(recipeContainer);
-  showRecipes(await searchMeals(searchHistory[0]), recipeContainer);
+  
+  let initialRecipes = [];
+  const initial = searchHistory[activeMode][0];
+  if (activeMode === "ingredients") initialRecipes = await searchMeals(initial);
+  else if (activeMode === "areas") initialRecipes = await searchMealsByArea(initial);
+  else if (activeMode === "categories") initialRecipes = await searchMealsByCategory(initial);
+
+  showRecipes(initialRecipes, recipeContainer);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   if (links[0]) links[0].classList.add("active");

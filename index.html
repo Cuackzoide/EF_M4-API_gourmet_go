@@ -20,6 +20,20 @@
           Gourmet GO! <br />Recipes finder
         </h1>
         <div class="row">
+          <div class="col d-flex justify-content-center mb-3">
+            <div class="btn-group shadow-sm" role="group" aria-label="Search Mode">
+              <input type="radio" class="btn-check" name="searchMode" id="modeIngredients" value="ingredients" checked>
+              <label class="btn btn-outline-warning text-black fw-semibold" for="modeIngredients">Ingredients</label>
+            
+              <input type="radio" class="btn-check" name="searchMode" id="modeAreas" value="areas">
+              <label class="btn btn-outline-warning text-black fw-semibold" for="modeAreas">Origin</label>
+            
+              <input type="radio" class="btn-check" name="searchMode" id="modeCategories" value="categories">
+              <label class="btn btn-outline-warning text-black fw-semibold" for="modeCategories">Category</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="col">
             <form class="d-flex" role="search">
               <input
