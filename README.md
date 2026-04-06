@@ -1,150 +1,106 @@
-# 🍽️ Gourmet GO! - Buscador de Recetas
+# 🍽️ Gourmet GO! - De Prototipo a Recetario Profesional
 
-## 📋 Descripción
+## 🚀 La Evolución del Proyecto
 
-Proyecto integrador del **Módulo 4: JavaScript Avanzado** - Sprint 2. Una aplicación web funcional que permite buscar recetas por ingrediente utilizando la API de TheMealDB. Transforma una maqueta estática en una experiencia interactiva con llamadas asíncronas y renderizado dinámico.
+Este proyecto nació originalmente como el desafío integrador del **Módulo 4: JavaScript Avanzado** del bootcamp **Desarrollo Full Stack Javascript** de **MindHub**. El objetivo principal era transformar una maqueta estática en **una aplicación interactiva** que permitiera buscar recetas por ingrediente **utilizando la API de _TheMealDB_**.
 
-## ✨ Características
-
-- 🔍 **Búsqueda por ingrediente**: Encuentra recetas basadas en un ingrediente específico
-- ⚡ **Renderizado dinámico**: Resultados actualizados sin recargar la página
-- 🚫 **Manejo de errores**: Mensajes informativos cuando no hay resultados
-- 📱 **Responsive**: Diseño adaptativo con Bootstrap 5
-
-## 🛠️ Tecnologías Utilizadas
-
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Framework CSS**: Bootstrap 5.3.8
-- **API**: [TheMealDB](https://www.themealdb.com/api.php)
-- **Herramientas**: Fetch API, Async/Await, Template Literals, Destructuring
-
-## 🚀 Instalación y Uso
-
-### Prerrequisitos
-
-- Navegador web moderno
-- Conexión a internet (para las llamadas a la API)
-
-### Instalación
-
-1. Clona este repositorio:
-
-   ```bash
-   git clone https://github.com/tu-usuario/EF_M4-API_gourmet_go.git
-   ```
-
-2. Navega al directorio del proyecto:
-
-   ```bash
-   cd EF_M4-API_gourmet_go
-   ```
-
-3. Abre `index.html` en tu navegador preferido.
-
-### Uso
-
-1. Ingresa un ingrediente en la barra de búsqueda (ej: "chicken", "beef", "tomato")
-2. Presiona el botón "Buscar" o la tecla Enter
-3. Explora las recetas que aparecen en la galería
-
-## 📚 API de TheMealDB
-
-### Endpoints utilizados:
-
-- **Lista de ingredientes**: `https://www.themealdb.com/api/json/v1/1/list.php?i=list`
-- **Búsqueda por ingrediente**: `https://www.themealdb.com/api/json/v1/1/filter.php?i={ingrediente}`
-
-### Estructura de respuesta:
-
-```json
-{
-  "meals": [
-    {
-      "idMeal": "52772",
-      "strMeal": "Teriyaki Chicken Casserole",
-      "strDrinkAlternate": null,
-      "strCategory": "Chicken",
-      "strArea": "Japanese",
-      "strInstructions": "...",
-      "strMealThumb": "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
-      "strTags": "Meat,Casserole",
-      "strYoutube": "https://www.youtube.com/watch?v=4aZr5hZXP_s"
-      // ... más propiedades
-    }
-  ]
-}
-```
-
-## 📖 Historias de Usuario
-
-### HU-04: Búsqueda Funcional de Recetas
-
-**Como usuario**, quiero poder escribir un ingrediente en la barra de búsqueda y presionar "Buscar", para obtener una lista de recetas que contengan ese ingrediente.
-
-**Criterios de Aceptación:**
-
-- ✅ Prevención del comportamiento por defecto del formulario
-- ✅ Captura del texto del input
-- ✅ Llamada asíncrona a la API usando `fetch` con `async/await`
-- ✅ Endpoint: `https://www.themealdb.com/api/json/v1/1/filter.php?i=[ingrediente]`
-
-### HU-05: Renderizado Dinámico de Resultados
-
-**Como usuario**, quiero que los resultados de mi búsqueda aparezcan en la galería sin que la página se recargue.
-
-**Criterios de Aceptación:**
-
-- ✅ Eliminación de tarjetas hard-codeadas del HTML
-- ✅ Generación dinámica de tarjetas usando template literals
-- ✅ Uso de desestructuración para extraer datos
-- ✅ Limpieza del contenedor antes de nuevas búsquedas
-
-### HU-06: Manejo de Búsquedas sin Resultados
-
-**Como usuario**, quiero recibir un mensaje claro si mi búsqueda no encuentra ninguna receta.
-
-**Criterios de Aceptación:**
-
-- ✅ Mensaje informativo cuando `meals` es `null`
-
-## ⚙️ Requisitos Técnicos
-
-- **Archivo principal**: `assets/js/main.js`
-- **Sintaxis**: ES6+ obligatoria (`let/const`, arrow functions, template literals, destructuring)
-- **Asincronía**: `fetch` + `async/await`
-- **DOM**: Manipulación nativa del DOM
-- **Buenas prácticas**: Programación Orientada a Objetos recomendada (clase `Receta`)
-
-## 📁 Estructura del Proyecto
-
-EF_M4-API_gourmet_go/
-├── index.html # Página principal
-├── README.md # Este archivo
-├── assets/
-│ ├── css/
-│ │ └── styles.css # Estilos personalizados
-│ ├── img/ # Imágenes del proyecto
-│ └── js/
-│ └── main.js # Lógica JavaScript
-
-## 🤝 Contribuciones
-
-¡Las contribuciones son bienvenidas! Si encuentras un bug o tienes una mejora:
-
-1. Haz un fork del proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto es parte de un curso educativo y está disponible bajo la Licencia MIT.
-
-## 👨‍💻 Autor
-
-Proyecto desarrollado como parte del curso de JavaScript Avanzado.
+Sin embargo, su **utilidad real era limitada**. Al explorar mejor la API noté que contiene múltiples endpoints que no estaban siendo aprovechados, por lo que decidí ir más allá y transformé lo que era un simple ejercicio de clase en un **recetario dinámico, profesional y realmente útil**, impulsado por mi deseo de ofrecer una **experiencia de usuario superior**.
 
 ---
 
-⭐ Si te gusta este proyecto, ¡dale una estrella en GitHub!
+## 🛠️ El Núcleo: El Prototipo Inicial
+
+Cumpliendo con los estándares del curso, la base del proyecto incluye:
+
+- 🔍 **Búsqueda por ingrediente**: Conexión con `filter.php?i={ingrediente}`.
+- ⚡ **Asincronía Real**: Implementación fundamentada en `Fetch API` con `Async/Await`.
+- 📱 **Diseño Adaptativo**: Estructura sólida utilizando Bootstrap 5.
+- 🚫 **Validación**: Control de búsquedas sin resultados y prevención de errores en el DOM.
+
+---
+
+## ✨ La Evolución: Desarrollo Profesional
+
+Para elevar el proyecto a un nivel de software real, implementé las siguientes mejoras críticas:
+
+### 1. Sistema de Búsqueda de Tres Ejes
+
+Ya no se limita a ingredientes. El usuario puede alternar instantáneamente entre:
+
+- **Por Ingrediente**: Buscador clásico con sugerencias visuales.
+- **Por Origen (Area)**: Exploración culinaria por países con integración de banderas.
+- **Por Categoría**: Filtro rápido por tipo de plato (Postres, Vegano, Mariscos, etc.).
+
+### 2. UX Premium e Integración Visual
+
+- 💀 **Skeleton Loading**: Implementación de pantallas de carga "esqueleto" para evitar cambios bruscos de diseño (_layout shifts_) y spinners mientras se obtienen los datos.
+- 🏳️ **Identidad Visual Dinámica**:
+  - Uso de **FlagCDN** para mostrar banderas de países en tiempo real.
+  - Diccionario de emojis para categorías.
+  - Sistema híbrido de iconos para ingredientes (Emoji local + Imagen de API como fallback).
+- 🃏 **Modales Interactivos**: Detalle completo de la receta con lista de ingredientes exacta, instrucciones formateadas y acceso directo al video en YouTube.
+
+### 3. Persistencia y Contexto (Smart History)
+
+- ▶️ **Navegación Fluida**: El historial no es solo texto; son botones interactivos que permiten repetir búsquedas con un solo clic.
+- 🗃️ **Historial Categorizado**: El sistema recuerda de forma independiente las últimas 6 búsquedas de cada modo (Ingredientes, Áreas y Categorías) usando `LocalStorage`.
+- 🔄 **Coherencia de Contexto**: Sincronización global del modo de búsqueda. Sin importar si la acción se inicia desde la barra principal o mediante botones del modal, la aplicación actualiza automáticamente el input, el historial y los resultados, manteniendo una UX coherente en todo momento.
+
+---
+
+## ⚙️ Especificaciones Técnicas
+
+- **Lenguaje**: JavaScript (ES6+) bajo estándares de limpieza y modularidad.
+- **Estilos**: Bootstrap 5.3.3 + CSS Personalizado para efectos y dimensiones.
+- **APIs & Recursos**:
+  - [TheMealDB](https://www.themealdb.com/api.php) (Motor de datos)
+  - [FlagCDN](https://flagcdn.com/) (Banderas del mundo)
+  - JavaScript nativo para manipulación del DOM y lógica de filtrado.
+
+---
+
+## 📖 Historias de Usuario (Ampliadas)
+
+| Historia   | Objetivo                                                | Estado |
+| :--------- | :------------------------------------------------------ | :----- |
+| **HU-04**  | Búsqueda funcional por ingrediente base.                | ✅     |
+| **HU-05**  | Renderizado dinámico de tarjetas sin recarga de página. | ✅     |
+| **HU-06**  | Manejo de estados vacíos y errores.                     | ✅     |
+| **PRO-00** | NavBar con historial de busquedas por ingredientes.     | ✅     |
+| :---       | :---                                                    | :----- |
+| **PRO-01** | Renderizado de receta completa en modal dinamico.       | ✅     |
+| **PRO-02** | Feedback visual avanzado (Skeletons/Spinners).          | ✅     |
+| **PRO-03** | Identidad visual dinamica (Banderas, Emojis, etc).      | ✅     |
+| **PRO-04** | Búsqueda por Origen y Categoría con cambio de modo.     | ✅     |
+| **PRO-05** | NavBar con historial de busquedas dinamico por modo.    | ✅     |
+| **PRO-06** | Persistencia de historial por modo en LocalStorage.     | ✅     |
+
+---
+
+## 📁 Estructura del Repositorio
+
+```
+EF_M4-API_gourmet_go/
+├── index.html          # Interfaz principal (Modos de búsqueda + Contenedor)
+├── README.md           # Documentación del proyecto
+├── assets/
+│   ├── css/
+│   │   └── styles.css  # Refinamiento estético y Skeletons
+│   ├── js/
+│   │   └── main.js    # Lógica de negocio, LocalStorage y API Fetch
+```
+
+---
+
+## 👨‍💻 Autor
+
+**Gourmet GO!** es el resultado de mi pasion por la cocina 👨‍🍳 y la tecnologia 🧑‍💻,
+sumado a el deseo de crear una herramienta realmente útil para los usuarios 🫶.
+con el conocimiento adquirido en el curso de **JavaScript Avanzado**.
+
+**[Cuackzoide](https://Cuackzoide.github.io/)**
+**[Oliver Leonardo Barra Acevedo](https://linkedin.com/in/oliver-barra-cuackzoide/)**
+
+---
+
+⭐ Si encuentras útil este proyecto o te gusta su implementación, ¡considera darle una estrella en GitHub!
