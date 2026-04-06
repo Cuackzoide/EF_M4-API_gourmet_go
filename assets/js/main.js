@@ -37,7 +37,87 @@ function splitInstructions(instructions) {
     .map((step) => `<li>${step.trim()}</li>`)
     .join("");
 }
+// Funcion para buscar bandera de pais 
+function CountryFlag(country) {
+  const flagsMapping = {
+    Algerian: "dz",
+    American: "us",
+    Argentinian: "ar",
+    Australian: "au",
+    British: "gb",
+    Canadian: "ca",
+    Chinese: "cn",
+    Croatian: "hr",
+    Dutch: "nl",
+    Egyptian: "eg",
+    Filipino: "ph",
+    French: "fr",
+    Greek: "gr",
+    Indian: "in",
+    Irish: "ie",
+    Italian: "it",
+    Jamaican: "jm",
+    Japanese: "jp",
+    Kenyan: "ke",
+    Malaysian: "my",
+    Mexican: "mx",
+    Moroccan: "ma",
+    Norwegian: "no",
+    Polish: "pl",
+    Portuguese: "pt",
+    Russian: "ru",
+    "Saudi Arabian": "sa",
+    Slovakian: "sk",
+    Spanish: "es",
+    Syrian: "sy",
+    Thai: "th",
+    Tunisian: "tn",
+    Turkish: "tr",
+    Ukrainian: "ua",
+    Uruguayan: "uy",
+    Venezulan: "ve",
+    Vietnamese: "vn",
+  };
 
+  const code = flagsMapping[country];
+  return code ? `https://flagcdn.com/w40/${code}.png` : "🏁";
+}
+
+// Funcion para buscar emoji de categoria
+function CategoryEmoji(category) {
+  switch (category) {
+    case "Beef":
+      return "🥩";
+    case "Chicken":
+      return "🍗";
+    case "Dessert":
+      return "🍰";
+    case "Lamb":
+      return "🍖";
+    case "Miscellaneous":
+      return "🍱";
+    case "Pasta":
+      return "🍝";
+    case "Pork":
+      return "🐖";
+    case "Seafood":
+      return "🐟";
+    case "Side":
+      return "🥗";
+    case "Starter":
+      return "🥣";
+    case "Vegan":
+      return "🌱";
+    case "Vegetarian":
+      return "🥦";
+    case "Breakfast":
+      return "🍳";
+    case "Goat":
+      return "🐐";
+    default:
+      return "🍽️";
+  }
+}
 // Array de ingredientes buscados, con valores por defecto para inicio rapido
 let searchHistory = [
   "onion",
@@ -55,7 +135,7 @@ function renderSkeleton(elementHTML) {
   for (let i = 0; i < 6; i++) {
     elementHTML.innerHTML += /* html */ `
       <div class="col">
-        <div class="card h-100" aria-hidden="true">
+        <div class="card bg-warning-subtle h-100" aria-hidden="true">
           <div class="placeholder-glow">
             <div class="placeholder col-12 rounded" style="height: 14.5rem;"></div>
           </div>
@@ -66,7 +146,7 @@ function renderSkeleton(elementHTML) {
             <!-- <p class="card-text placeholder-glow">
               <span class="placeholder col-6 rounded-pill"></span>
             </p> -->
-            <a tabindex="-1" class="btn btn-warning-subtle col-12 disabled placeholder rounded mt-auto"></a>
+            <a tabindex="-1" class="btn btn-warning col-12 disabled placeholder rounded mt-auto">Loading...</a>
           </div>
         </div>
       </div>`;
@@ -105,7 +185,7 @@ function showRecipes(recipesArray, elementHTML) {
   recipesArray.forEach((product) => {
     elementHTML.innerHTML += /* html */ `
     <article class="col">
-      <div class="card h-100">
+      <div class="card bg-warning-subtle h-100">
         <img
           src="${product.strMealThumb}"
           class="card-img-top img-fit rounded"
@@ -160,28 +240,40 @@ function fullRecipe(recipe, elementHTML) {
   }
   // renderizado de la receta completa
   elementHTML.innerHTML += /* html */ `
-      <div class="modal-header d-flex">
-        <h1 class="modal-title fs-5 text-center text-warning" id="recipeModalLabel">
+      <div class="modal-header bg-warning text-center">
+        <h1 class="modal-title fs-5" id="recipeModalLabel">
         ${recipe.strMeal}
         </h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}" class="img-thumbnail mb-3">
-        <div class="border rounded p-2 mb-2">
+        <div class="border rounded bg-warning-subtle p-2 mb-2">
         <h2>Ingredients</h2>
         <ul>
           ${ingredientsHTML}
         </ul>
         </div>
-        <div class="border rounded p-2 mb-2">
+        <div class="border rounded bg-warning-subtle p-2 mb-2">
         <h2>Instructions</h2>
         <ul class="list-unstyled">${splitInstructions(recipe.strInstructions)}</ul>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-footer bg-warning">
+      <button class="btn btn-outline-secondary" id="area-btn" data-target="${recipe.strArea}">
+      <img src="${CountryFlag(recipe.strArea)}" alt="${recipe.strArea}">
+      ${recipe.strArea}
+      </button>
+      <button class="btn btn-outline-secondary" id="category-btn" data-target="${recipe.strCategory}">
+      ${CategoryEmoji(recipe.strCategory)}
+      ${recipe.strCategory}
+      </button>
+      ${recipe.strYoutube ? 
+        `<a class="btn btn-outline-secondary" href="${recipe.strYoutube}" target="_blank" rel="noopener noreferrer">See on video</a>` : 
+        ""}
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
       </div>`;
+      console.log(recipe);
 }
 
 // Función para buscar ingredientes válidos desde la API
@@ -197,6 +289,32 @@ async function searchIngredient() {
   }
 }
 
+// Función para buscar todas las áreas (países) desde la API
+async function searchAreas() {
+  const url = "https://www.themealdb.com/api/json/v1/1/list.php?a=list";
+  try {
+    const response = await fetch(url);
+    const { meals } = await response.json();
+    return meals.map((area) => area.strArea);
+  } catch (error) {
+    console.error("Error retrieving areas:", error);
+    return [];
+  }
+}
+
+// Función para buscar todas las categorías desde la API
+async function searchCategories() {
+  const url = "https://www.themealdb.com/api/json/v1/1/categories.php";
+  try {
+    const response = await fetch(url);
+    const { categories } = await response.json();
+    return categories.map((cat) => cat.strCategory);
+  } catch (error) {
+    console.error("Error retrieving categories:", error);
+    return [];
+  }
+}
+
 // Función para buscar recetas por ingrediente desde la API
 async function searchMeals(ingredient) {
   const url = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`;
@@ -206,6 +324,32 @@ async function searchMeals(ingredient) {
     return meals;
   } catch (error) {
     console.log(error);
+    return [];
+  }
+}
+
+// Función para buscar recetas por área (país) desde la API
+async function searchMealsByArea(area) {
+  const url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${area}`;
+  try {
+    const response = await fetch(url);
+    const { meals } = await response.json();
+    return meals;
+  } catch (error) {
+    console.error("Error retrieving meals by area:", error);
+    return [];
+  }
+}
+
+// Función para buscar recetas por categoría desde la API
+async function searchMealsByCategory(category) {
+  const url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`;
+  try {
+    const response = await fetch(url);
+    const { meals } = await response.json();
+    return meals;
+  } catch (error) {
+    console.error("Error retrieving meals by category:", error);
     return [];
   }
 }
@@ -297,6 +441,26 @@ recipeContainer.addEventListener("click", async (e) => {
   const recipeId = recipeBtn.dataset.id;
   const recipe = await searchRecipeById(recipeId);
   fullRecipe(recipe.meals[0], modalContent);
+});
+
+// Busqueda por pais o categoria (modal)
+modalContent.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const areaBtn = e.target.closest("#area-btn");
+  const categoryBtn = e.target.closest("#category-btn");
+  if (!areaBtn && !categoryBtn) return;  
+
+  modal.hide();
+  renderSkeleton(recipeContainer);
+  let recipes = [];
+  if (areaBtn) {
+    const area = areaBtn.dataset.target;
+    recipes = await searchMealsByArea(area);
+  } else if (categoryBtn) {
+    const category = categoryBtn.dataset.target;
+    recipes = await searchMealsByCategory(category);
+  }
+  showRecipes(recipes, recipeContainer);
 });
 
 // Carga inicial de la página

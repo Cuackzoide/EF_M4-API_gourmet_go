@@ -17,3 +17,13 @@
   overflow: hidden;
   margin-bottom: 1rem;
 }
+
+.modal-content {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
+    url(../img/vintage_classic_recipe_box_on_a_wooden_table_1570x.webp);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
