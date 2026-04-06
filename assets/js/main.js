@@ -38,7 +38,7 @@ function splitInstructions(instructions) {
     .join("");
 }
 // Funcion para buscar bandera de pais 
-function CountryFlag(country) {
+function CountryFlag(country, size = 40) {
   const flagsMapping = {
     Algerian: "dz",
     American: "us",
@@ -80,7 +80,7 @@ function CountryFlag(country) {
   };
 
   const code = flagsMapping[country];
-  return code ? `https://flagcdn.com/w40/${code}.png` : "🏁";
+  return code ? `https://flagcdn.com/w${size}/${code}.png` : "🏁";
 }
 
 // Funcion para buscar emoji de categoria
@@ -270,7 +270,7 @@ function showTabs(categoriesArray, TabsBar) {
     
     // Condicional para agregar banderas o emojis según el modo
     if (activeMode === "areas") {
-      displayContent = `<img src="${CountryFlag(item)}" alt="${item}" width="18" class="me-1"> ${item}`;
+      displayContent = `<img src="${CountryFlag(item, 20)}" alt="${item}" class="me-1"> ${item}`;
     } else if (activeMode === "categories") {
       displayContent = `${CategoryEmoji(item)} ${item}`;
     } else if (activeMode === "ingredients") {
@@ -325,7 +325,7 @@ function fullRecipe(recipe, elementHTML) {
       </div>
       <div class="modal-footer bg-warning-subtle">
       <button class="btn btn-warning text-dark" id="area-btn" data-target="${recipe.strArea}">
-      <img src="${CountryFlag(recipe.strArea)}" alt="${recipe.strArea}">
+      <img src="${CountryFlag(recipe.strArea, 20)}" alt="${recipe.strArea}">
       ${recipe.strArea}
       </button>
       <button class="btn btn-warning text-dark" id="category-btn" data-target="${recipe.strCategory}">
