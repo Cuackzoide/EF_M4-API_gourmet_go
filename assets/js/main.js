@@ -323,21 +323,20 @@ function fullRecipe(recipe, elementHTML) {
         <ul class="list-unstyled">${splitInstructions(recipe.strInstructions)}</ul>
         </div>
       </div>
-      <div class="modal-footer bg-warning">
-      <button class="btn btn-outline-secondary" id="area-btn" data-target="${recipe.strArea}">
+      <div class="modal-footer bg-warning-subtle">
+      <button class="btn btn-warning text-dark" id="area-btn" data-target="${recipe.strArea}">
       <img src="${CountryFlag(recipe.strArea)}" alt="${recipe.strArea}">
       ${recipe.strArea}
       </button>
-      <button class="btn btn-outline-secondary" id="category-btn" data-target="${recipe.strCategory}">
+      <button class="btn btn-warning text-dark" id="category-btn" data-target="${recipe.strCategory}">
       ${CategoryEmoji(recipe.strCategory)}
       ${recipe.strCategory}
       </button>
       ${recipe.strYoutube ? 
-        `<a class="btn btn-outline-secondary" href="${recipe.strYoutube}" target="_blank" rel="noopener noreferrer">See on video</a>` : 
+        `<a class="btn btn-warning text-dark" href="${recipe.strYoutube}" target="_blank">🎦 On video</a>` : 
         ""}
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-warning text-dark" data-bs-dismiss="modal">Close</button>
       </div>`;
-      console.log(recipe);
 }
 
 // Función para buscar ingredientes válidos desde la API
@@ -568,10 +567,10 @@ recipeContainer.addEventListener("click", async (e) => {
 
 // Busqueda por pais o categoria (modal)
 modalContent.addEventListener("click", async (e) => {
-  e.preventDefault();
   const areaBtn = e.target.closest("#area-btn");
   const categoryBtn = e.target.closest("#category-btn");
   if (!areaBtn && !categoryBtn) return;
+  e.preventDefault(); // solo bloquea clicks de area category btn
 
   modal.hide();
   renderSkeleton(recipeContainer);
@@ -591,7 +590,6 @@ modalContent.addEventListener("click", async (e) => {
     recipes = await searchMealsByCategory(searchedItem);
   }
 
-  // Mismo orden que el submit: renderizar → historial → tabs → tab activa
   showRecipes(recipes, recipeContainer);
   updateHistory(searchedItem);
 
@@ -602,11 +600,7 @@ modalContent.addEventListener("click", async (e) => {
     categories: "Search by category (e.g. Seafood)"
   };
   searchInput.placeholder = placeholders[activeMode];
-
-  // Re-renderizar tabs con el nuevo historial (searchedItem queda en [0])
   showTabs(searchHistory[activeMode], navTabs);
-
-  // Activar la primera tab = la nueva entrada recién buscada
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   if (links[0]) links[0].classList.add("active");
