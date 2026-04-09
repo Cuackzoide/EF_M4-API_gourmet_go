@@ -73,7 +73,7 @@ Ya no se limita a ingredientes. El usuario puede alternar instantáneamente entr
 | **HU-05**  | Renderizado dinámico de tarjetas sin recarga de página. | ✅     |
 | **HU-06**  | Manejo de estados vacíos y errores.                     | ✅     |
 | **PRO-00** | NavBar con historial de busquedas por ingredientes.     | ✅     |
-| :---       | :---                                                    | :----- |
+|            |                                                         |         |
 | **PRO-01** | Renderizado de receta completa en modal dinamico.       | ✅     |
 | **PRO-02** | Feedback visual avanzado (Skeletons/Spinners).          | ✅     |
 | **PRO-03** | Identidad visual dinamica (Banderas, Emojis, etc).      | ✅     |
