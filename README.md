@@ -1,10 +1,16 @@
 # 🍽️ Gourmet GO! - De Prototipo a Recetario Profesional
 
+### 🔗 DEMO: https://cuackzoide.github.io/EF_M4-API_gourmet_go/
+
+### 🔗 REPO: https://github.com/Cuackzoide/EF_M4-API_gourmet_go
+
 ## 🚀 La Evolución del Proyecto
 
 Este proyecto nació originalmente como el desafío integrador del **Módulo 4: JavaScript Avanzado** del bootcamp **Desarrollo Full Stack Javascript** de **MindHub**. El objetivo principal era transformar una maqueta estática en **una aplicación interactiva** que permitiera buscar recetas por ingrediente **utilizando la API de _TheMealDB_**.
 
 Sin embargo, su **utilidad real era limitada**. Al explorar mejor la API noté que contiene múltiples endpoints que no estaban siendo aprovechados, por lo que decidí ir más allá y transformé lo que era un simple ejercicio de clase en un **recetario dinámico, profesional y realmente útil**, impulsado por mi deseo de ofrecer una **experiencia de usuario superior**.
+
+![Gourmet GO! Demo](./assets/img/demo.gif)
 
 ---
 
@@ -46,7 +52,7 @@ Ya no se limita a ingredientes. El usuario puede alternar instantáneamente entr
 - 🗃️ **Historial Categorizado**: El sistema recuerda de forma independiente las últimas 6 búsquedas de cada modo (Ingredientes, Áreas y Categorías) usando `LocalStorage`.
 - 🔄 **Coherencia de Contexto**: Sincronización global del modo de búsqueda. Sin importar si la acción se inicia desde la barra principal o mediante botones del modal, la aplicación actualiza automáticamente el input, el historial y los resultados, manteniendo una UX coherente en todo momento.
 
----
+## [Historial de busquedas](./assets/img/historial.gif)
 
 ## ⚙️ Especificaciones Técnicas
 
@@ -98,8 +104,8 @@ EF_M4-API_gourmet_go/
 sumado a el deseo de crear una herramienta realmente útil para los usuarios 🫶.
 con el conocimiento adquirido en el curso de **JavaScript Avanzado**.
 
-**[Cuackzoide](https://Cuackzoide.github.io/)**
-**[Oliver Leonardo Barra Acevedo](https://linkedin.com/in/oliver-barra-cuackzoide/)**
+**[GitHub - Cuackzoide](https://github.com/Cuackzoide)**
+**[LinkedIn - Oliver Barra](https://linkedin.com/in/oliver-barra-cuackzoide/)**
 
 ---
 
