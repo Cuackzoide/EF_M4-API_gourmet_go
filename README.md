@@ -52,7 +52,7 @@ Ya no se limita a ingredientes. El usuario puede alternar instantáneamente entr
 - 🗃️ **Historial Categorizado**: El sistema recuerda de forma independiente las últimas 6 búsquedas de cada modo (Ingredientes, Áreas y Categorías) usando `LocalStorage`.
 - 🔄 **Coherencia de Contexto**: Sincronización global del modo de búsqueda. Sin importar si la acción se inicia desde la barra principal o mediante botones del modal, la aplicación actualiza automáticamente el input, el historial y los resultados, manteniendo una UX coherente en todo momento.
 
-## [Historial de busquedas](./assets/img/historial.gif)
+![Historial de busquedas](./assets/img/historial.gif)
 
 ## ⚙️ Especificaciones Técnicas
 
