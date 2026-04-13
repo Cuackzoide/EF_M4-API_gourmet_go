@@ -4,6 +4,10 @@
     linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
     url(../img/tarjetas_de_recetas_vintage.jpg);
 }
+.title {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
 /* Imagenes de las recetas */
 .img-fit {
   aspect-ratio: 3 / 2;
