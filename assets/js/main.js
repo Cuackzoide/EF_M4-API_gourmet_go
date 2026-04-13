@@ -230,15 +230,99 @@ function updateHistory(string) {
   saveHistory();
 }
 
-// Funcion para renderizar las recetas
-function showRecipes(recipesArray, elementHTML) {
+// Función para buscar recetas aleatorias (como relleno)
+async function getRandomRecipes(count = 6) {
+  const promises = [];
+  for (let i = 0; i < count; i++) {
+    promises.push(fetch("https://www.themealdb.com/api/json/v1/1/random.php").then(res => res.json()));
+  }
+  try {
+    const results = await Promise.all(promises);
+    return results.map(res => res.meals[0]);
+  } catch (error) {
+    console.error("Error retrieving random recipes:", error);
+    return [];
+  }
+}
+
+// Render fallback progresivo para busquedas fallidas
+async function handleNotFound(searchTerm, mode, elementHTML) {
+  // Nuevas tarjetas de precarga
+  let skeletonHTML = "";
+  for (let i = 0; i < 6; i++) {
+    skeletonHTML += /* html */ `
+      <div class="col">
+        <div class="card bg-warning-subtle h-100" aria-hidden="true">
+          <div class="placeholder-glow">
+            <div class="placeholder col-12 rounded" style="height: 14.5rem;"></div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-10 rounded-pill"></span>
+            </h5>
+            <a tabindex="-1" class="btn btn-warning col-12 disabled placeholder rounded mt-auto">Loading...</a>
+          </div>
+        </div>
+      </div>`;
+  }
+// Mensaje de error "not found" + nuevos esqueletos
+  elementHTML.innerHTML = /* html */ `
+    <div class="col-12 mb-3">
+      <div class="alert bg-warning-subtle border-warning text-center shadow-sm" role="alert">
+        <h5 class="alert-heading fw-bold mb-1">
+          🔍 No recipes were found with "<strong>${searchTerm}</strong>"
+        </h5>
+        <p class="mb-0 text-secondary">But here are some suggestions ✨</p>
+      </div>
+    </div>
+    ${skeletonHTML}`;
+
+    // Buscamos las sugerencias
+  const randomRecipes = await getRandomRecipes(6);
+  let recipesHTML = "";
+  if (randomRecipes && randomRecipes.length > 0) {
+    randomRecipes.forEach((product) => {
+      recipesHTML += /* html */ `
+    <article class="col">
+      <div class="card bg-warning-subtle h-100">
+        <img
+          src="${product.strMealThumb}"
+          class="card-img-top img-fit rounded"
+          alt="${product.strMeal}"
+          loading="lazy"
+        />
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title pb-2">${product.strMeal}</h5>
+          <button type="button" 
+          class="btn btn-warning text-secondary fw-semibold mt-auto recipe-btn" 
+          data-bs-toggle="modal" 
+          data-bs-target="#recipeModal" 
+          data-id="${product.idMeal}">
+            GO to Recipe
+          </button>
+          </div>
+          </div>
+          </article>`;
+    });
+  }
+
+  // Reemplazamos SOLO los esqueletos 
+  const alertDiv = elementHTML.querySelector('.col-12');
   elementHTML.innerHTML = "";
+  elementHTML.appendChild(alertDiv);
+  elementHTML.insertAdjacentHTML("beforeend", recipesHTML);
+}
+
+// Funcion para renderizar las recetas
+async function showRecipes(recipesArray, elementHTML, searchTerm = "", mode = activeMode) {
   if (!recipesArray || recipesArray.length === 0) {
-    elementHTML.innerHTML = /* html */ `<p class="text-center w-100 lead">No recipes found.</p>`;
+    await handleNotFound(searchTerm, mode, elementHTML);
     return;
   }
+  
+  let finalHTML = "";
   recipesArray.forEach((product) => {
-    elementHTML.innerHTML += /* html */ `
+    finalHTML += /* html */ `
     <article class="col">
       <div class="card bg-warning-subtle h-100">
         <img
@@ -260,6 +344,9 @@ function showRecipes(recipesArray, elementHTML) {
           </div>
           </article>`;
   });
+  
+  // Realizamos el repintado del DOM de una sola vez
+  elementHTML.innerHTML = finalHTML;
 }
 
 // Funcion para renderizar las pestañas de categorías (historial)
@@ -477,8 +564,8 @@ searchForm.addEventListener("submit", async (e) => {
     }
   }
 
-  if (isValid && recipes.length > 0) {
-    showRecipes(recipes, recipeContainer);
+  if (isValid && recipes && recipes.length > 0) {
+    await showRecipes(recipes, recipeContainer, matchedItem, activeMode);
     // Guardamos el nombre original (con mayúsculas) en el historial
     updateHistory(matchedItem);
     showTabs(searchHistory[activeMode], navTabs);
@@ -486,7 +573,7 @@ searchForm.addEventListener("submit", async (e) => {
     links.forEach((el) => el.classList.remove("active"));
     if (links[0]) links[0].classList.add("active");
   } else {
-    recipeContainer.innerHTML = /* html */ `<p class="text-center w-100 lead">No results for "${searchTerm}" in ${activeMode}.</p>`;
+    await showRecipes([], recipeContainer, searchTerm, activeMode);
   }
   searchInput.value = "";
   searchInput.focus();
@@ -531,7 +618,7 @@ navTabs.addEventListener("click", async (e) => {
   else if (activeMode === "areas") recipes = await searchMealsByArea(target);
   else if (activeMode === "categories") recipes = await searchMealsByCategory(target);
 
-  showRecipes(recipes, recipeContainer);
+  await showRecipes(recipes, recipeContainer, target, activeMode);
 });
 
 // Manejo del clic en la "Brand" de la barra de navegación
@@ -545,7 +632,7 @@ navBrand.addEventListener("click", async (e) => {
   else if (activeMode === "areas") recipes = await searchMealsByArea(initial);
   else if (activeMode === "categories") recipes = await searchMealsByCategory(initial);
 
-  showRecipes(recipes, recipeContainer);
+  await showRecipes(recipes, recipeContainer, initial, activeMode);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   if (links[0]) links[0].classList.add("active");
@@ -590,8 +677,11 @@ modalContent.addEventListener("click", async (e) => {
     recipes = await searchMealsByCategory(searchedItem);
   }
 
-  showRecipes(recipes, recipeContainer);
-  updateHistory(searchedItem);
+  await showRecipes(recipes, recipeContainer, searchedItem, activeMode);
+  
+  if (recipes && recipes.length > 0) {
+    updateHistory(searchedItem);
+  }
 
   // Sincronizar placeholder
   const placeholders = {
@@ -617,7 +707,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   else if (activeMode === "areas") initialRecipes = await searchMealsByArea(initial);
   else if (activeMode === "categories") initialRecipes = await searchMealsByCategory(initial);
 
-  showRecipes(initialRecipes, recipeContainer);
+  await showRecipes(initialRecipes, recipeContainer, initial, activeMode);
   const links = document.querySelectorAll(".nav-link");
   links.forEach((el) => el.classList.remove("active"));
   if (links[0]) links[0].classList.add("active");

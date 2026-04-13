@@ -1,18 +1,20 @@
+/* Estilos de la página */
 .hero {
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
     url(../img/tarjetas_de_recetas_vintage.jpg);
 }
+/* Imagenes de las recetas */
 .img-fit {
   aspect-ratio: 3 / 2;
   object-fit: cover;
 }
 
-/* Unificar altura de títulos para una cuadrícula perfecta */
+/* Unificar altura de títulos */
 .card-title {
-  height: 3.5rem; /* Espacio exacto para 2 líneas de texto */
+  height: 3.5rem; /* 2 líneas de alto */
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Corta el texto con elipses si supera las 2 líneas */
+  -webkit-line-clamp: 2; /* Corta el texto si supera las 2 líneas */
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 1rem;
@@ -40,4 +42,15 @@
 .tab-icon {
   font-size: 1.1rem;
   line-height: 1;
+}
+
+/* Forzar ancho completo "not found"*/
+#recipe-container > .col-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+/* Evitar subida del footer */
+#recipe-container {
+  min-height: 65vh;
 }
