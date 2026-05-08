@@ -157,22 +157,6 @@ function IngredientIcon(ingredient) {
   // Normalizamos el nombre para búsqueda en el diccionario (Capitalizado)
   const capitalized = ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase();
   const emoji = commonIngredients[capitalized];
-
-  // Estructura oficial de historial por categorías
-  const defaultHistory = {
-    ingredients: ["onion", "chicken", "garlic", "beef", "tomato", "potatoes"],
-    areas: ["American", "British", "Canadian", "Chinese", "French", "Greek"],
-    categories: ["Beef", "Chicken", "Dessert", "Lamb", "Pasta", "Pork"],
-  };
-  
-  // Cargar historial desde LocalStorage o usar valores por defecto
-  let searchHistory = JSON.parse(localStorage.getItem("gourmetGoHistory")) || defaultHistory;
-  let activeMode = "ingredients"; // Modo de búsqueda activo por defecto
-  
-  // Función para guardar historial en LocalStorage
-  function saveHistory() {
-    localStorage.setItem("gourmetGoHistory", JSON.stringify(searchHistory));
-  }
   
   if (emoji) {
     return `<span class="tab-icon">${emoji}</span>`;
@@ -181,6 +165,22 @@ function IngredientIcon(ingredient) {
   // Fallback: Imagen de la API (Small) para mayor cobertura
   return `<img src="https://www.themealdb.com/images/ingredients/${capitalized}-Small.png" 
           alt="${ingredient}" class="tab-icon-img" loading="lazy">`;
+}
+
+// Estructura oficial de historial por categorías
+const defaultHistory = {
+  ingredients: ["onion", "chicken", "garlic", "beef", "tomato", "potatoes"],
+  areas: ["American", "British", "Canadian", "Chinese", "French", "Greek"],
+  categories: ["Beef", "Chicken", "Dessert", "Lamb", "Pasta", "Pork"],
+};
+
+// Cargar historial desde LocalStorage o usar valores por defecto
+let searchHistory = JSON.parse(localStorage.getItem("gourmetGoHistory")) || defaultHistory;
+let activeMode = "ingredients"; // Modo de búsqueda activo por defecto
+
+// Función para guardar historial en LocalStorage
+function saveHistory() {
+  localStorage.setItem("gourmetGoHistory", JSON.stringify(searchHistory));
 }
 
 // Funcion para renderizar las pestañas de categorías (historial)
