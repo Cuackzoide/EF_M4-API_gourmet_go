@@ -75,7 +75,7 @@ function CountryFlag(country, size = 40) {
     Turkish: "tr",
     Ukrainian: "ua",
     Uruguayan: "uy",
-    Venezulan: "ve",
+    Venezuelan: "ve",
     Vietnamese: "vn",
   };
 
@@ -96,8 +96,8 @@ function CategoryEmoji(category) {
       return "🍖";
     case "Miscellaneous":
       return "🍱";
-    case "Pasta":
-      return "🍝";
+      case "Pasta":
+        return "🍝";
     case "Pork":
       return "🐖";
     case "Seafood":
@@ -112,9 +112,10 @@ function CategoryEmoji(category) {
       return "🥦";
     case "Breakfast":
       return "🍳";
+    case "Goat":
       return "🐐";
     default:
-      return "🍽️";
+        return "🍽️";
   }
 }
 
@@ -157,6 +158,22 @@ function IngredientIcon(ingredient) {
   const capitalized = ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase();
   const emoji = commonIngredients[capitalized];
 
+  // Estructura oficial de historial por categorías
+  const defaultHistory = {
+    ingredients: ["onion", "chicken", "garlic", "beef", "tomato", "potatoes"],
+    areas: ["American", "British", "Canadian", "Chinese", "French", "Greek"],
+    categories: ["Beef", "Chicken", "Dessert", "Lamb", "Pasta", "Pork"],
+  };
+  
+  // Cargar historial desde LocalStorage o usar valores por defecto
+  let searchHistory = JSON.parse(localStorage.getItem("gourmetGoHistory")) || defaultHistory;
+  let activeMode = "ingredients"; // Modo de búsqueda activo por defecto
+  
+  // Función para guardar historial en LocalStorage
+  function saveHistory() {
+    localStorage.setItem("gourmetGoHistory", JSON.stringify(searchHistory));
+  }
+  
   if (emoji) {
     return `<span class="tab-icon">${emoji}</span>`;
   }
@@ -165,21 +182,84 @@ function IngredientIcon(ingredient) {
   return `<img src="https://www.themealdb.com/images/ingredients/${capitalized}-Small.png" 
           alt="${ingredient}" class="tab-icon-img" loading="lazy">`;
 }
-// Estructura oficial de historial por categorías
-const defaultHistory = {
-  ingredients: ["onion", "chicken", "garlic", "beef", "tomato", "potatoes"],
-  areas: ["American", "British", "Canadian", "Chinese", "French", "Greek"],
-  categories: ["Beef", "Chicken", "Dessert", "Lamb", "Pasta", "Pork"],
-};
 
-// Cargar historial desde LocalStorage o usar valores por defecto
-let searchHistory = JSON.parse(localStorage.getItem("gourmetGoHistory")) || defaultHistory;
-let activeMode = "ingredients"; // Modo de búsqueda activo por defecto
-
-// Función para guardar historial en LocalStorage
-function saveHistory() {
-  localStorage.setItem("gourmetGoHistory", JSON.stringify(searchHistory));
+// Funcion para renderizar las pestañas de categorías (historial)
+function showTabs(categoriesArray, TabsBar) {
+  TabsBar.innerHTML = "";
+  categoriesArray.forEach((item) => {
+    let displayContent = item;
+            
+    // Condicional para agregar banderas o emojis según el modo
+    if (activeMode === "areas") {
+      displayContent = `<img src="${CountryFlag(item, 20)}" alt="${item}" class="me-1"> ${item}`;
+    } else if (activeMode === "categories") {
+      displayContent = `${CategoryEmoji(item)} ${item}`;
+    } else if (activeMode === "ingredients") {
+      displayContent = `${IngredientIcon(item)} ${item}`;
+    }
+        
+    TabsBar.innerHTML += /* html */ `
+    <li class="nav-item" role="presentation">
+      <a class="nav-link text-black" href="#" data-target="${item}">
+        ${displayContent}
+      </a>
+    </li>`;
+  });
 }
+        
+// Funcion para renderizar una receta completa
+function fullRecipe(recipe, elementHTML) {
+  elementHTML.innerHTML = "";
+  if (!recipe || recipe.length === 0) {
+    elementHTML.innerHTML = /* html */ `<p class="text-center w-100 lead">No recipes found.</p>`;
+    return;
+  }
+  // accion intermedia para obtener los ingredientes
+  let ingredientsHTML = "";
+  for (let i = 1; i <= 20; i++) {
+    const ingredient = recipe["strIngredient" + i];
+    const measure = recipe["strMeasure" + i];
+    if (ingredient && ingredient.trim() !== "") {
+      ingredientsHTML += /* html */ `<li>${ingredient} - ${measure}</li>`;
+    }
+  }
+  // renderizado de la receta completa
+  elementHTML.innerHTML += /* html */ `
+              <div class="modal-header bg-warning text-center">
+                <h1 class="modal-title fs-5" id="recipeModalLabel">
+                ${recipe.strMeal}
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}" class="img-thumbnail mb-3">
+                <div class="border rounded bg-warning-subtle p-2 mb-2">
+                <h2>Ingredients</h2>
+                <ul>
+                  ${ingredientsHTML}
+                </ul>
+                </div>
+                <div class="border rounded bg-warning-subtle p-2 mb-2">
+                <h2>Instructions</h2>
+                <ul class="list-unstyled">${splitInstructions(recipe.strInstructions)}</ul>
+                </div>
+              </div>
+              <div class="modal-footer bg-warning-subtle">
+              <button class="btn btn-warning text-dark" id="area-btn" data-target="${recipe.strArea}">
+              <img src="${CountryFlag(recipe.strArea, 20)}" alt="${recipe.strArea}">
+              ${recipe.strArea}
+              </button>
+              <button class="btn btn-warning text-dark" id="category-btn" data-target="${recipe.strCategory}">
+              ${CategoryEmoji(recipe.strCategory)}
+              ${recipe.strCategory}
+              </button>
+              ${recipe.strYoutube ? 
+                `<a class="btn btn-warning text-dark" href="${recipe.strYoutube}" target="_blank">🎦 On video</a>` : 
+                ""}
+                <button type="button" class="btn btn-warning text-dark" data-bs-dismiss="modal">Close</button>
+              </div>`;
+}
+
 
 // Función para mostrar esqueletos de carga (Skeleton)
 function renderSkeleton(elementHTML) {
@@ -349,82 +429,6 @@ async function showRecipes(recipesArray, elementHTML, searchTerm = "", mode = ac
   elementHTML.innerHTML = finalHTML;
 }
 
-// Funcion para renderizar las pestañas de categorías (historial)
-function showTabs(categoriesArray, TabsBar) {
-  TabsBar.innerHTML = "";
-  categoriesArray.forEach((item) => {
-    let displayContent = item;
-    
-    // Condicional para agregar banderas o emojis según el modo
-    if (activeMode === "areas") {
-      displayContent = `<img src="${CountryFlag(item, 20)}" alt="${item}" class="me-1"> ${item}`;
-    } else if (activeMode === "categories") {
-      displayContent = `${CategoryEmoji(item)} ${item}`;
-    } else if (activeMode === "ingredients") {
-      displayContent = `${IngredientIcon(item)} ${item}`;
-    }
-
-    TabsBar.innerHTML += /* html */ `
-    <li class="nav-item" role="presentation">
-      <a class="nav-link text-black" href="#" data-target="${item}">
-        ${displayContent}
-      </a>
-    </li>`;
-  });
-}
-
-// Funcion para renderizar una receta completa
-function fullRecipe(recipe, elementHTML) {
-  elementHTML.innerHTML = "";
-  if (!recipe || recipe.length === 0) {
-    elementHTML.innerHTML = /* html */ `<p class="text-center w-100 lead">No recipes found.</p>`;
-    return;
-  }
-  // accion intermedia para obtener los ingredientes
-  let ingredientsHTML = "";
-  for (let i = 1; i <= 20; i++) {
-    const ingredient = recipe["strIngredient" + i];
-    const measure = recipe["strMeasure" + i];
-    if (ingredient && ingredient.trim() !== "") {
-      ingredientsHTML += /* html */ `<li>${ingredient} - ${measure}</li>`;
-    }
-  }
-  // renderizado de la receta completa
-  elementHTML.innerHTML += /* html */ `
-      <div class="modal-header bg-warning text-center">
-        <h1 class="modal-title fs-5" id="recipeModalLabel">
-        ${recipe.strMeal}
-        </h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <img src="${recipe.strMealThumb}" alt="${recipe.strMeal}" class="img-thumbnail mb-3">
-        <div class="border rounded bg-warning-subtle p-2 mb-2">
-        <h2>Ingredients</h2>
-        <ul>
-          ${ingredientsHTML}
-        </ul>
-        </div>
-        <div class="border rounded bg-warning-subtle p-2 mb-2">
-        <h2>Instructions</h2>
-        <ul class="list-unstyled">${splitInstructions(recipe.strInstructions)}</ul>
-        </div>
-      </div>
-      <div class="modal-footer bg-warning-subtle">
-      <button class="btn btn-warning text-dark" id="area-btn" data-target="${recipe.strArea}">
-      <img src="${CountryFlag(recipe.strArea, 20)}" alt="${recipe.strArea}">
-      ${recipe.strArea}
-      </button>
-      <button class="btn btn-warning text-dark" id="category-btn" data-target="${recipe.strCategory}">
-      ${CategoryEmoji(recipe.strCategory)}
-      ${recipe.strCategory}
-      </button>
-      ${recipe.strYoutube ? 
-        `<a class="btn btn-warning text-dark" href="${recipe.strYoutube}" target="_blank">🎦 On video</a>` : 
-        ""}
-        <button type="button" class="btn btn-warning text-dark" data-bs-dismiss="modal">Close</button>
-      </div>`;
-}
 
 // Función para buscar ingredientes válidos desde la API
 async function searchIngredient() {
